@@ -1,0 +1,28 @@
+{% extends 'core/main.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Department List</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in departments %}
+            <tr>
+                <td><a href="{% url 'department_detail' d.id %}">{{ d.id }}</a></td>
+                <td>{{ d.name }}</td>
+                <!-- Add more columns as needed -->
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No departments found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -20,14 +20,16 @@ class Project(models.Model):
         verbose_name_plural = "Projects"
 
 class Category(models.Model):
+    date_created = models.DateTimeField(auto_now=True, blank=True, null=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = 'category list'
 
     def __str__(self):
-        return str(self.name)
+        return f"{self.name} - {'Active' if self.is_active else 'Inactive'}"
 
 class Budget_Management(models.Model):
     date_created = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -45,6 +47,7 @@ class Budget_Management(models.Model):
     
     
 class Expense_Management(models.Model):
+    name = models.CharField(max_length=200, blank=True, null=True)
     date_created = models.DateTimeField(auto_now=True, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, blank=True, null=True)
     project = models.ForeignKey(Project, on_delete=models.SET_NULL, blank=True, null=True)

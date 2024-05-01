@@ -1,0 +1,15 @@
+<!-- budget_update.html -->
+{% extends 'core/main.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Budget</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-save"></i> Save</button>
+        <a href="{% url 'budget_list' %}" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Back</a>
+    </form>
+</div>
+{% endblock %}

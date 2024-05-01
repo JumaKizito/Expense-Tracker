@@ -1,0 +1,13 @@
+{% extends 'core/main.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Confirm Expense Deletion</h2>
+    <p>Are you sure you want to delete the department "{{ expense.name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+        <a href="{% url 'expense_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+{% endblock content %}
