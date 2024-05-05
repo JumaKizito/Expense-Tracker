@@ -2,20 +2,20 @@
 {% load static %}
 
 {% block content %}
-    <div class="container">
+    <div class="container mt-4">
         <h1 class="mb-4">{% if form.instance.pk %}Update Category{% else %}Create Category{% endif %}</h1>
-        <form method="post" class="mb-4">
+        <form method="post" class="category-form">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="id_name" class="form-label">Name:</label>
-                {{ form.name }}
+                <input type="text" id="id_name" name="name" class="form-control" value="{{ form.instance.name }}">
             </div>
             <div class="mb-3">
                 <label for="id_description" class="form-label">Description:</label>
-                {{ form.description }}
+                <textarea id="id_description" name="description" class="form-control">{{ form.instance.description }}</textarea>
             </div>
             <div class="mb-3 form-check">
-                {{ form.is_active }}
+                <input type="checkbox" id="id_is_active" name="is_active" class="form-check-input" {% if form.instance.is_active %}checked{% endif %}>
                 <label class="form-check-label" for="id_is_active">Active</label>
             </div>
             <div class="mb-3">

@@ -1,6 +1,5 @@
 {% extends 'core/main.html' %}
-{% blockcontent %}
-
+{% block content %}
 <div class="container mt-5">
     <h2>Confirm Department Deletion</h2>
     <p>Are you sure you want to delete the department "{{ department.name }}"?</p>
@@ -10,5 +9,4 @@
         <a href="{% url 'department-list' %}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
-
-{% endblockcontent %}
+{% endblock content %}
