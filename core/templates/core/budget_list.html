@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container mt-4">
         <!-- Header -->
-        <header class="bg-surface-primary border-bottom pt-6">
+        <header class="bg-surface-primary border-bottom pt-6 pb-6">
             <div class="container-fluid">
                 <div class="mb-npx">
                     <div class="row align-items-center">
@@ -16,11 +16,17 @@
                         <div class="col-sm-6 col-12 text-sm-end">
                             <div class="mx-n1">
                                 <a href="{% url 'budget_create' %}" class="btn d-inline-flex btn-sm btn-primary mx-1">
-                                    <span class=" pe-2">
+                                    <span class="pe-2">
                                         <i class="bi bi-plus"></i>
                                     </span>
                                     <span>Create</span>
                                 </a>
+                                <button class="btn d-inline-flex btn-sm btn-success mx-1" onclick="exportCSV()">
+                                    <span class="pe-2">
+                                        <i class="bi bi-download"></i>
+                                    </span>
+                                    <span>Export CSV</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -31,11 +37,10 @@
         <thead>
             <tr>
                 <th>Date Created</th>
-                <th>Department</th>
+                <th>Name</th>
                 <th>Project</th>
                 <th>Amount</th>
                 <th>Category</th>
-                <th>Remarks</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -43,11 +48,10 @@
             {% for budget in budgets %}
             <tr>
                 <td>{{ budget.date_created }}</td>
-                <td>{{ budget.department }}</td>
+                <td>{{ budget.name }}</td>
                 <td>{{ budget.project }}</td>
                 <td>{{ budget.amount }}</td>
                 <td>{{ budget.category }}</td>
-                <td>{{ budget.remarks }}</td>
                 <td>
                     <a href="{% url 'budget_detail' budget.pk %}" class="btn btn-sm btn-info" title="View"><i class="bi bi-eye"></i></a>
                     <a href="{% url 'budget_update' budget.pk %}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
