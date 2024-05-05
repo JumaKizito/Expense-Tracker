@@ -1,0 +1,17 @@
+{% extends 'registration/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h2 class="card-title">Logout</h2>
+                    <p class="card-text">You have been logged out.</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary">Login again</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
