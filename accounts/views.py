@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
+from django.contrib.auth import logout
+from django.http import JsonResponse
 
 def register(request):
     if request.method == 'POST':
@@ -20,4 +22,9 @@ def register(request):
 
 
 def logout_view(request):
-    return render(request, 'registration/logout.html')
+    if request.method == 'POST' and request.is_ajax():
+        logout(request)
+        return JsonResponse({'message': 'Logged out successfully'}, status=200)
+    else:
+        # Render your logout template for normal requests
+        return render(request, 'registration/logout.html')

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.db import models
 from .models import Department, Project, Category, Budget_Management, Expense_Management
 from .forms import DepartmentForm, ProjectForm, CategoryForm, BudgetManagementForm, ExpenseManagementForm
@@ -189,7 +190,20 @@ def budget_list(request):
 @login_required
 def budget_detail(request, pk):
     budget = get_object_or_404(Budget_Management, pk=pk)
-    return render(request, 'core/budget_detail.html', {'budget': budget})
+    data = {
+        'date_created': budget.date_created,
+        'name': budget.name,
+        'project': {
+            'id': budget.project.id,
+            'name': budget.project.name,
+        },
+        'amount': budget.amount,
+        'category': {
+            'id': budget.category.id,
+            'name': budget.category.name,
+        }
+    }
+    return JsonResponse(data)
 
 @login_required
 def budget_create(request):

@@ -3,36 +3,36 @@
 
 {% block content %}
 <div class="container mt-4">
-        <!-- Header -->
-        <header class="bg-surface-primary border-bottom pt-6 pb-6">
-            <div class="container-fluid">
-                <div class="mb-npx">
-                    <div class="row align-items-center">
-                        <div class="col-sm-6 col-12 mb-4 mb-sm-0">
-                            <!-- Title -->
-                            <h1 class="h2 mb-0 ls-tight">Budget List</h1>
-                        </div>
-                        <!-- Actions -->
-                        <div class="col-sm-6 col-12 text-sm-end">
-                            <div class="mx-n1">
-                                <a href="{% url 'budget_create' %}" class="btn d-inline-flex btn-sm btn-primary mx-1">
-                                    <span class="pe-2">
-                                        <i class="bi bi-plus"></i>
-                                    </span>
-                                    <span>Create</span>
-                                </a>
-                                <button class="btn d-inline-flex btn-sm btn-success mx-1" onclick="exportCSV()">
-                                    <span class="pe-2">
-                                        <i class="bi bi-download"></i>
-                                    </span>
-                                    <span>Export CSV</span>
-                                </button>
-                            </div>
+    <!-- Header -->
+    <header class="bg-surface-primary border-bottom pt-6 pb-6">
+        <div class="container-fluid">
+            <div class="mb-npx">
+                <div class="row align-items-center">
+                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+                        <!-- Title -->
+                        <h1 class="h2 mb-0 ls-tight">Budget List</h1>
+                    </div>
+                    <!-- Actions -->
+                    <div class="col-sm-6 col-12 text-sm-end">
+                        <div class="mx-n1">
+                            <a href="{% url 'budget_create' %}" class="btn d-inline-flex btn-sm btn-primary mx-1">
+                                <span class="pe-2">
+                                    <i class="bi bi-plus"></i>
+                                </span>
+                                <span>Create</span>
+                            </a>
+                            <button class="btn d-inline-flex btn-sm btn-success mx-1" onclick="exportCSV()">
+                                <span class="pe-2">
+                                    <i class="bi bi-download"></i>
+                                </span>
+                                <span>Export CSV</span>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -53,13 +53,60 @@
                 <td>{{ budget.amount }}</td>
                 <td>{{ budget.category }}</td>
                 <td>
-                    <a href="{% url 'budget_detail' budget.pk %}" class="btn btn-sm btn-info" title="View"><i class="bi bi-eye"></i></a>
-                    <a href="{% url 'budget_update' budget.pk %}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
-                    <a href="{% url 'budget_delete' budget.pk %}" class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                    <button class="btn btn-sm btn-info" title="View" onclick="viewBudgetDetails('{{ budget.id }}')">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <a href="{% url 'budget_update' budget.id %}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
+                    <a href="{% url 'budget_delete' budget.id %}" class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="budgetDetailsModal" tabindex="-1" role="dialog" aria-labelledby="budgetDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="budgetDetailsModalLabel">Budget Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="budgetDetailsBody">
+                <!-- Budget details will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function viewBudgetDetails(id) {
+        // Parse id to integer
+        id = parseInt(id);
+
+        $.ajax({
+            url: "{% url 'budget_detail' pk=999 %}".replace('999', id),
+            type: "GET",
+            success: function(data) {
+                // Populate modal body with budget details
+                $('#budgetDetailsBody').html(`
+                    <p><strong>Date Created:</strong> ${data.date_created}</p>
+                    <p><strong>Name:</strong> ${data.name}</p>
+                    <p><strong>Project:</strong> ${data.project.name}</p>
+                    <p><strong>Amount:</strong> ${data.amount}</p>
+                    <p><strong>Category:</strong> ${data.category.name}</p>
+                `);
+                // Show Bootstrap modal
+                $('#budgetDetailsModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error(xhr.responseText);
+            }
+        });
+    }
+</script>
 {% endblock %}
