@@ -1,0 +1,102 @@
+{% extends 'core/main.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <header class="bg-surface-primary border-bottom pt-6 pb-6">
+        <div class="container-fluid">
+            <div class="mb-npx">
+                <div class="row align-items-center">
+                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+                        <!-- Title -->
+                        <h1 class="h2 mb-0 ls-tight">project List</h1>
+                    </div>
+                    <!-- Actions -->
+                    <div class="col-sm-6 col-12 text-sm-end">
+                        <div class="mx-n1">
+                            <a href="{% url 'project_create' %}" class="btn d-inline-flex btn-sm btn-primary mx-1">
+                                <span class=" pe-2">
+                                    <i class="bi bi-plus"></i>
+                                </span>
+                                <span>Create</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Project Name</th>
+                <th>Department</th>
+                <th class="text-end">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href="{% url 'project_detail' project.pk %}">{{ project.name }}</a></td>
+                    <td><a href="{% url 'project_detail' project.pk %}">{{ project.department }}</a></td>
+                    <td class="text-end">
+                        <a href="{% url 'project_update' project.pk %}" class="btn btn-sm btn-primary me-2" aria-label="Edit project"><i class="bi bi-pencil"></i> Edit</a>
+                        <button onclick="deleteProject({{ project.pk }})" class="btn btn-sm btn-danger" aria-label="Delete department">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    function deleteProject(pk) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this project!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/projects/' + pk + '/delete/',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                'The project has been deleted.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred while deleting the project.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting the project.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+    </script>
+{% endblock %}

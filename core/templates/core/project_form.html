@@ -1,0 +1,22 @@
+{% extends 'core/main.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4">{% if form.instance.pk %}Update Project{% else %}Create Project{% endif %}</h1>
+        <form method="post" class="project-form">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_name" class="form-label">Name:</label>
+                <input type="text" id="id_name" name="name" class="form-control" value="{{ form.instance.name }}">
+            </div>
+            <div class="mb-3">
+                <label for="id_department" class="form-label">Department:</label>
+                <select id="id_department" name="department" class="form-control">
+                    <option value="{{ form.instance.department }}">{{ form.instance.department }}</option>
+                    <!-- Add options dynamically from your database if needed -->
+                </select>
+            </div>
+        </form>
+    </div>
+{% endblock %}

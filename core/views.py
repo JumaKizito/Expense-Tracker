@@ -314,3 +314,42 @@ def project_list(request):
     projects = Project.objects.all()
     context = {'projects': projects}
     return render(request, 'core/project_list.html', context)
+
+@login_required
+def project_detail(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    data = {
+        'name': project.name,
+    }
+    return JsonResponse(data)
+
+@login_required
+def project_create(request):
+    if request.method == 'POST':
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('project_list')
+    else:
+        form = ProjectForm()
+    return render(request, 'core/project_create.html', {'form': form})
+
+@login_required
+def project_update(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('project_list')
+    else:
+        form = ProjectForm(instance=project)
+    return render(request, 'core/project_update.html', {'form': form})
+
+@login_required
+def project_delete(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == 'POST':
+        project.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
