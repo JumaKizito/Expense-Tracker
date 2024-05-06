@@ -41,14 +41,60 @@
                     <td><a href="{% url 'category_detail' category.pk %}">{{ category.name }}</a></td>
                     <td class="text-end">
                         <a href="{% url 'category_update' category.pk %}" class="btn btn-sm btn-primary me-2" aria-label="Edit Category"><i class="bi bi-pencil"></i> Edit</a>
-                        <form action="{% url 'category_delete' category.pk %}" method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-danger" aria-label="Delete Category"><i class="bi bi-trash"></i> Delete</button>
-                        </form>
+                        <button onclick="deleteCategory({{ category.pk }})" class="btn btn-sm btn-danger" aria-label="Delete department">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+<script>
+    function deleteCategory(pk) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this category!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/categories/' + pk + '/delete/',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                'The category has been deleted.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred while deleting the category.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting the category.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+    </script>
 {% endblock %}

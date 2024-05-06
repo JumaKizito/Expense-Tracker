@@ -40,7 +40,6 @@
                 <th>Name</th>
                 <th>Project</th>
                 <th>Amount</th>
-                <th>Category</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -51,13 +50,14 @@
                 <td>{{ budget.name }}</td>
                 <td>{{ budget.project }}</td>
                 <td>{{ budget.amount }}</td>
-                <td>{{ budget.category }}</td>
                 <td>
                     <button class="btn btn-sm btn-info" title="View" onclick="viewBudgetDetails('{{ budget.id }}')">
                         <i class="bi bi-eye"></i>
                     </button>
                     <a href="{% url 'budget_update' budget.id %}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
-                    <a href="{% url 'budget_delete' budget.id %}" class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                    <button onclick="deleteBudget({{ budget.id }})" class="btn btn-sm btn-danger" aria-label="Delete department">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
                 </td>
             </tr>
             {% endfor %}
@@ -91,13 +91,21 @@
             url: "{% url 'budget_detail' pk=999 %}".replace('999', id),
             type: "GET",
             success: function(data) {
+                console.log(data);
+                // Check for null or undefined for each property
+                const dateCreated = data.date_created !== null && data.date_created !== undefined ? data.date_created : 'none';
+                const name = data.name !== null && data.name !== undefined ? data.name : 'none';
+                const projectName = data.project !== null && data.project !== undefined && data.project.name !== null && data.project.name !== undefined ? data.project.name : 'none';
+                const amount = data.amount !== null && data.amount !== undefined ? data.amount : 'none';
+                const categoryName = data.category !== null && data.category !== undefined && data.category.name !== null && data.category.name !== undefined ? data.category.name : 'none';
+
                 // Populate modal body with budget details
                 $('#budgetDetailsBody').html(`
-                    <p><strong>Date Created:</strong> ${data.date_created}</p>
-                    <p><strong>Name:</strong> ${data.name}</p>
-                    <p><strong>Project:</strong> ${data.project.name}</p>
-                    <p><strong>Amount:</strong> ${data.amount}</p>
-                    <p><strong>Category:</strong> ${data.category.name}</p>
+                    <p><strong>Date Created:</strong> ${dateCreated}</p>
+                    <p><strong>Name:</strong> ${name}</p>
+                    <p><strong>Project:</strong> ${projectName}</p>
+                    <p><strong>Amount:</strong> ${amount}</p>
+                    <p><strong>Category:</strong> ${categoryName}</p>
                 `);
                 // Show Bootstrap modal
                 $('#budgetDetailsModal').modal('show');
@@ -105,6 +113,51 @@
             error: function(xhr, status, error) {
                 // Handle error
                 console.error(xhr.responseText);
+            }
+        });
+    }
+    function deleteBudget(pk) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this budget!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/budgets/' + pk + '/delete/',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                'The budget has been deleted.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred while deleting the budget.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting the budget.',
+                            'error'
+                        );
+                    }
+                });
             }
         });
     }

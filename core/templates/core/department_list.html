@@ -47,10 +47,9 @@
                     <td>{{ d.name }}</td>
                     <td class="text-end">
                         <a href="{% url 'department_update' d.id %}" class="btn btn-sm btn-primary me-2" aria-label="Edit department"><i class="bi bi-pencil"></i> Edit</a>
-                        <form action="{% url 'department_delete' d.id %}" method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-danger" aria-label="Delete department"><i class="bi bi-trash"></i> Delete</button>
-                        </form>
+                        <button onclick="deleteDepartment({{ d.pk }})" class="btn btn-sm btn-danger" aria-label="Delete department">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
                     </td>
                 </tr>
                 {% empty %}
@@ -62,4 +61,53 @@
         </table>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+function deleteDepartment(pk) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this department!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/departments/' + pk + '/delete/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire(
+                            'Deleted!',
+                            'The department has been deleted.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting the department.',
+                            'error'
+                        );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while deleting the department.',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+}
+</script>
 {% endblock %}

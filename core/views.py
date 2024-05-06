@@ -45,8 +45,21 @@ def expense_list(request):
 @login_required
 def expense_detail(request, pk):
     expense = get_object_or_404(Expense_Management, pk=pk)
-    context = {'expense': expense}
-    return render(request, 'core/expense_detail.html', context)
+    data = {
+        'name': expense.name,
+        'date_created': expense.date_created,
+        'department': {
+            'id': expense.department.id,
+            'name': expense.department.name,
+        },
+        'project': {
+            'id': expense.project.id,
+            'name': expense.project.name,
+        },
+        'amount': expense.amount,
+        'remarks': expense.remarks,
+    }
+    return JsonResponse(data)
 
 @login_required
 def expense_create(request):
@@ -93,12 +106,9 @@ def expense_delete(request, pk):
     expense = get_object_or_404(Expense_Management, pk=pk)
     # Check if the request method is POST
     if request.method == 'POST':
-        # Delete the expense object
         expense.delete()
-        # Redirect to the expense list page
-        return redirect('expense_list')
-    # Render the expense delete confirmation template with the expense object
-    return render(request, 'core/expense_confirm_delete.html', {'expense': expense})
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': True})
 
 # Department Views
 @login_required
@@ -109,7 +119,8 @@ def department_list(request):
 @login_required
 def department_detail(request, pk):
     department = get_object_or_404(Department, pk=pk)
-    return render(request, 'core/department_detail.html', {'department': department})
+    context = {'department': department}
+    return render(request, 'core/department_detail.html', context)
 
 @login_required
 def department_create(request):
@@ -139,8 +150,8 @@ def department_delete(request, pk):
     department = get_object_or_404(Department, pk=pk)
     if request.method == 'POST':
         department.delete()
-        return redirect('department-list')
-    return render(request, 'core/department_confirm_delete.html', {'department': department})
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
 
 def category_list(request):
     categories = Category.objects.all()
@@ -179,8 +190,8 @@ def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
         category.delete()
-        return redirect('category_list')
-    return render(request, 'core/category_confirm_delete.html', {'category': category})
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
 
 @login_required
 def budget_list(request):
@@ -231,6 +242,7 @@ def budget_update(request, pk):
 @login_required
 def budget_delete(request, pk):
     budget = get_object_or_404(Budget_Management, pk=pk)
-    budget.delete()
-    return redirect('budget_list')
-
+    if request.method == 'POST':
+        budget.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})

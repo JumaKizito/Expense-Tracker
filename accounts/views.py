@@ -9,22 +9,18 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Account created successfully. You can now log in.')
-            return redirect('login')  # Redirect to login page after successful registration
+            # Instead of Django messages, return JSON response with success message
+            return JsonResponse({'message': 'Account created successfully. You can now log in.'})
         else:
-            # If form is not valid, display error messages
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{field}: {error}')
+            # If form is not valid, return JSON response with error messages
+            errors = dict(form.errors.items())
+            return JsonResponse({'errors': errors}, status=400)
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
-
 def logout_view(request):
-    if request.method == 'POST' and request.is_ajax():
+    if request.method == 'POST':
         logout(request)
         return JsonResponse({'message': 'Logged out successfully'}, status=200)
-    else:
-        # Render your logout template for normal requests
-        return render(request, 'registration/logout.html')
+    return JsonResponse({'message': 'Logged out failed'}, status=400)

@@ -169,8 +169,10 @@
             // Perform AJAX logout request
             $.ajax({
               type: 'POST',
-              url: '{% url "logout" %}',
-              data: {},
+              url: '/accounts/logout/',
+              data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+              },
               success: function (response) {
                 // Redirect to login page
                 window.location.href = '{% url "login" %}';
