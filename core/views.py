@@ -1,6 +1,7 @@
+import csv
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.db import models
 from .models import Department, Project, Category, Budget_Management, Expense_Management
 from .forms import DepartmentForm, ProjectForm, CategoryForm, BudgetManagementForm, ExpenseManagementForm
@@ -38,6 +39,20 @@ def dashboard_view(request):
 @login_required
 def expense_list(request):
     """List expense"""
+    if 'export' in request.GET:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="expenses.csv"'
+
+        expenses = Expense_Management.objects.all()
+
+        writer = csv.writer(response)
+        writer.writerow(['Name', 'Date Created', 'Department', 'Project', 'Amount', 'Remarks'])
+
+        for expense in expenses:
+            writer.writerow([expense.name, expense.date_created, expense.department.name if expense.department else '',
+                             expense.project.name if expense.project else '', expense.amount, expense.remarks])
+
+        return response
     expenses = Expense_Management.objects.all()
     context = {'expenses': expenses}
     return render(request, 'core/expense_list.html', context)
@@ -113,8 +128,24 @@ def expense_delete(request, pk):
 # Department Views
 @login_required
 def department_list(request):
+    """List departments"""
+    if 'export' in request.GET:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="departments.csv"'
+
+        departments = Department.objects.all()
+
+        writer = csv.writer(response)
+        writer.writerow(['Name'])
+
+        for department in departments:
+            writer.writerow([department.name])
+
+        return response
+
     departments = Department.objects.all()
-    return render(request, 'core/department_list.html', {'departments': departments})
+    context = {'departments': departments}
+    return render(request, 'core/department_list.html', context)
 
 @login_required
 def department_detail(request, pk):
@@ -195,8 +226,25 @@ def category_delete(request, pk):
 
 @login_required
 def budget_list(request):
+    """List budgets"""
+    if 'export' in request.GET:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="budgets.csv"'
+
+        budgets = Budget_Management.objects.all()
+
+        writer = csv.writer(response)
+        writer.writerow(['Name', 'Date Created', 'Department', 'Project', 'Amount', 'Category', 'Remarks'])
+
+        for budget in budgets:
+            writer.writerow([budget.name, budget.date_created, budget.department.name if budget.department else '',
+                             budget.project.name if budget.project else '', budget.amount, budget.category.name if budget.category else '', budget.remarks])
+
+        return response
+
     budgets = Budget_Management.objects.all()
-    return render(request, 'core/budget_list.html', {'budgets': budgets})
+    context = {'budgets': budgets}
+    return render(request, 'core/budget_list.html', context)
 
 @login_required
 def budget_detail(request, pk):
@@ -246,3 +294,23 @@ def budget_delete(request, pk):
         budget.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
+def project_list(request):
+    """List projects"""
+    if 'export' in request.GET:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="projects.csv"'
+
+        projects = Project.objects.all()
+
+        writer = csv.writer(response)
+        writer.writerow(['Name', 'Department'])
+
+        for project in projects:
+            writer.writerow([project.name, project.department.name])
+
+        return response
+
+    projects = Project.objects.all()
+    context = {'projects': projects}
+    return render(request, 'core/project_list.html', context)
