@@ -14,19 +14,21 @@
                     </div>
                     <!-- Actions -->
                     <div class="col-sm-6 col-12 text-sm-end">
-                        <div class="mx-n1">
+                        <div class="mx-n1 d-flex align-items-center justify-content-end">
                             <a href="{% url 'budget_create' %}" class="btn d-inline-flex btn-sm btn-primary mx-1">
                                 <span class="pe-2">
                                     <i class="bi bi-plus"></i>
                                 </span>
                                 <span>Create</span>
                             </a>
-                            <button class="btn d-inline-flex btn-sm btn-success mx-1" onclick="exportCSV()">
-                                <span class="pe-2">
-                                    <i class="bi bi-download"></i>
-                                </span>
-                                <span>Export CSV</span>
-                            </button>
+                            <form action="{% url 'budget_list' %}" method="get" class="d-inline-block">
+                                <button class="btn d-inline-flex btn-sm btn-success mx-1" type="submit" name="export" value="1">
+                                    <span class="pe-2">
+                                        <i class="bi bi-download"></i>
+                                    </span>
+                                    <span>Export to CSV</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
