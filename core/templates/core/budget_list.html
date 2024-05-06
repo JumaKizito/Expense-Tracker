@@ -3,39 +3,45 @@
 
 {% block content %}
 <div class="container mt-4">
-        <!-- Header -->
-        <header class="bg-surface-primary border-bottom pt-6">
-            <div class="container-fluid">
-                <div class="mb-npx">
-                    <div class="row align-items-center">
-                        <div class="col-sm-6 col-12 mb-4 mb-sm-0">
-                            <!-- Title -->
-                            <h1 class="h2 mb-0 ls-tight">Budget List</h1>
-                        </div>
-                        <!-- Actions -->
-                        <div class="col-sm-6 col-12 text-sm-end">
-                            <div class="mx-n1">
-                                <a href="{% url 'budget_create' %}" class="btn d-inline-flex btn-sm btn-primary mx-1">
-                                    <span class=" pe-2">
-                                        <i class="bi bi-plus"></i>
+    <!-- Header -->
+    <header class="bg-surface-primary border-bottom pt-6 pb-6">
+        <div class="container-fluid">
+            <div class="mb-npx">
+                <div class="row align-items-center">
+                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+                        <!-- Title -->
+                        <h1 class="h2 mb-0 ls-tight">Budget List</h1>
+                    </div>
+                    <!-- Actions -->
+                    <div class="col-sm-6 col-12 text-sm-end">
+                        <div class="mx-n1 d-flex align-items-center justify-content-end">
+                            <a href="{% url 'budget_create' %}" class="btn d-inline-flex btn-sm btn-primary mx-1">
+                                <span class="pe-2">
+                                    <i class="bi bi-plus"></i>
+                                </span>
+                                <span>Create</span>
+                            </a>
+                            <form action="{% url 'budget_list' %}" method="get" class="d-inline-block">
+                                <button class="btn d-inline-flex btn-sm btn-success mx-1" type="submit" name="export" value="1">
+                                    <span class="pe-2">
+                                        <i class="bi bi-download"></i>
                                     </span>
-                                    <span>Create</span>
-                                </a>
-                            </div>
+                                    <span>Export to CSV</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Date Created</th>
-                <th>Department</th>
+                <th>Name</th>
                 <th>Project</th>
                 <th>Amount</th>
-                <th>Category</th>
-                <th>Remarks</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -43,19 +49,119 @@
             {% for budget in budgets %}
             <tr>
                 <td>{{ budget.date_created }}</td>
-                <td>{{ budget.department }}</td>
+                <td>{{ budget.name }}</td>
                 <td>{{ budget.project }}</td>
                 <td>{{ budget.amount }}</td>
-                <td>{{ budget.category }}</td>
-                <td>{{ budget.remarks }}</td>
                 <td>
-                    <a href="{% url 'budget_detail' budget.pk %}" class="btn btn-sm btn-info" title="View"><i class="bi bi-eye"></i></a>
-                    <a href="{% url 'budget_update' budget.pk %}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
-                    <a href="{% url 'budget_delete' budget.pk %}" class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                    <button class="btn btn-sm btn-info" title="View" onclick="viewBudgetDetails('{{ budget.id }}')">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <a href="{% url 'budget_update' budget.id %}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
+                    <button onclick="deleteBudget({{ budget.id }})" class="btn btn-sm btn-danger" aria-label="Delete department">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="budgetDetailsModal" tabindex="-1" role="dialog" aria-labelledby="budgetDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="budgetDetailsModalLabel">Budget Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="budgetDetailsBody">
+                <!-- Budget details will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function viewBudgetDetails(id) {
+        // Parse id to integer
+        id = parseInt(id);
+
+        $.ajax({
+            url: "{% url 'budget_detail' pk=999 %}".replace('999', id),
+            type: "GET",
+            success: function(data) {
+                console.log(data);
+                // Check for null or undefined for each property
+                const dateCreated = data.date_created !== null && data.date_created !== undefined ? data.date_created : 'none';
+                const name = data.name !== null && data.name !== undefined ? data.name : 'none';
+                const projectName = data.project !== null && data.project !== undefined && data.project.name !== null && data.project.name !== undefined ? data.project.name : 'none';
+                const amount = data.amount !== null && data.amount !== undefined ? data.amount : 'none';
+                const categoryName = data.category !== null && data.category !== undefined && data.category.name !== null && data.category.name !== undefined ? data.category.name : 'none';
+
+                // Populate modal body with budget details
+                $('#budgetDetailsBody').html(`
+                    <p><strong>Date Created:</strong> ${dateCreated}</p>
+                    <p><strong>Name:</strong> ${name}</p>
+                    <p><strong>Project:</strong> ${projectName}</p>
+                    <p><strong>Amount:</strong> ${amount}</p>
+                    <p><strong>Category:</strong> ${categoryName}</p>
+                `);
+                // Show Bootstrap modal
+                $('#budgetDetailsModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error(xhr.responseText);
+            }
+        });
+    }
+    function deleteBudget(pk) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this budget!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/budgets/' + pk + '/delete/',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                'The budget has been deleted.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred while deleting the budget.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting the budget.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+</script>
 {% endblock %}

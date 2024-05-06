@@ -1,5 +1,7 @@
+import csv
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, HttpResponse
 from django.db import models
 from .models import Department, Project, Category, Budget_Management, Expense_Management
 from .forms import DepartmentForm, ProjectForm, CategoryForm, BudgetManagementForm, ExpenseManagementForm
@@ -37,6 +39,20 @@ def dashboard_view(request):
 @login_required
 def expense_list(request):
     """List expense"""
+    if 'export' in request.GET:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="expenses.csv"'
+
+        expenses = Expense_Management.objects.all()
+
+        writer = csv.writer(response)
+        writer.writerow(['Name', 'Date Created', 'Department', 'Project', 'Amount', 'Remarks'])
+
+        for expense in expenses:
+            writer.writerow([expense.name, expense.date_created, expense.department.name if expense.department else '',
+                             expense.project.name if expense.project else '', expense.amount, expense.remarks])
+
+        return response
     expenses = Expense_Management.objects.all()
     context = {'expenses': expenses}
     return render(request, 'core/expense_list.html', context)
@@ -44,8 +60,21 @@ def expense_list(request):
 @login_required
 def expense_detail(request, pk):
     expense = get_object_or_404(Expense_Management, pk=pk)
-    context = {'expense': expense}
-    return render(request, 'core/expense_detail.html', context)
+    data = {
+        'name': expense.name,
+        'date_created': expense.date_created,
+        'department': {
+            'id': expense.department.id,
+            'name': expense.department.name,
+        },
+        'project': {
+            'id': expense.project.id,
+            'name': expense.project.name,
+        },
+        'amount': expense.amount,
+        'remarks': expense.remarks,
+    }
+    return JsonResponse(data)
 
 @login_required
 def expense_create(request):
@@ -92,23 +121,37 @@ def expense_delete(request, pk):
     expense = get_object_or_404(Expense_Management, pk=pk)
     # Check if the request method is POST
     if request.method == 'POST':
-        # Delete the expense object
         expense.delete()
-        # Redirect to the expense list page
-        return redirect('expense_list')
-    # Render the expense delete confirmation template with the expense object
-    return render(request, 'core/expense_confirm_delete.html', {'expense': expense})
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': True})
 
 # Department Views
 @login_required
 def department_list(request):
+    """List departments"""
+    if 'export' in request.GET:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="departments.csv"'
+
+        departments = Department.objects.all()
+
+        writer = csv.writer(response)
+        writer.writerow(['Name'])
+
+        for department in departments:
+            writer.writerow([department.name])
+
+        return response
+
     departments = Department.objects.all()
-    return render(request, 'core/department_list.html', {'departments': departments})
+    context = {'departments': departments}
+    return render(request, 'core/department_list.html', context)
 
 @login_required
 def department_detail(request, pk):
     department = get_object_or_404(Department, pk=pk)
-    return render(request, 'core/department_detail.html', {'department': department})
+    context = {'department': department}
+    return render(request, 'core/department_detail.html', context)
 
 @login_required
 def department_create(request):
@@ -138,8 +181,8 @@ def department_delete(request, pk):
     department = get_object_or_404(Department, pk=pk)
     if request.method == 'POST':
         department.delete()
-        return redirect('department-list')
-    return render(request, 'core/department_confirm_delete.html', {'department': department})
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
 
 def category_list(request):
     categories = Category.objects.all()
@@ -178,18 +221,48 @@ def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
         category.delete()
-        return redirect('category_list')
-    return render(request, 'core/category_confirm_delete.html', {'category': category})
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
 
 @login_required
 def budget_list(request):
+    """List budgets"""
+    if 'export' in request.GET:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="budgets.csv"'
+
+        budgets = Budget_Management.objects.all()
+
+        writer = csv.writer(response)
+        writer.writerow(['Name', 'Date Created', 'Department', 'Project', 'Amount', 'Category', 'Remarks'])
+
+        for budget in budgets:
+            writer.writerow([budget.name, budget.date_created, budget.department.name if budget.department else '',
+                             budget.project.name if budget.project else '', budget.amount, budget.category.name if budget.category else '', budget.remarks])
+
+        return response
+
     budgets = Budget_Management.objects.all()
-    return render(request, 'core/budget_list.html', {'budgets': budgets})
+    context = {'budgets': budgets}
+    return render(request, 'core/budget_list.html', context)
 
 @login_required
 def budget_detail(request, pk):
     budget = get_object_or_404(Budget_Management, pk=pk)
-    return render(request, 'core/budget_detail.html', {'budget': budget})
+    data = {
+        'date_created': budget.date_created,
+        'name': budget.name,
+        'project': {
+            'id': budget.project.id,
+            'name': budget.project.name,
+        },
+        'amount': budget.amount,
+        'category': {
+            'id': budget.category.id,
+            'name': budget.category.name,
+        }
+    }
+    return JsonResponse(data)
 
 @login_required
 def budget_create(request):
@@ -217,6 +290,66 @@ def budget_update(request, pk):
 @login_required
 def budget_delete(request, pk):
     budget = get_object_or_404(Budget_Management, pk=pk)
-    budget.delete()
-    return redirect('budget_list')
+    if request.method == 'POST':
+        budget.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
 
+def project_list(request):
+    """List projects"""
+    if 'export' in request.GET:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="projects.csv"'
+
+        projects = Project.objects.all()
+
+        writer = csv.writer(response)
+        writer.writerow(['Name', 'Department'])
+
+        for project in projects:
+            writer.writerow([project.name, project.department.name])
+
+        return response
+
+    projects = Project.objects.all()
+    context = {'projects': projects}
+    return render(request, 'core/project_list.html', context)
+
+@login_required
+def project_detail(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    data = {
+        'name': project.name,
+    }
+    return JsonResponse(data)
+
+@login_required
+def project_create(request):
+    if request.method == 'POST':
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('project_list')
+    else:
+        form = ProjectForm()
+    return render(request, 'core/project_create.html', {'form': form})
+
+@login_required
+def project_update(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('project_list')
+    else:
+        form = ProjectForm(instance=project)
+    return render(request, 'core/project_update.html', {'form': form})
+
+@login_required
+def project_delete(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == 'POST':
+        project.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})

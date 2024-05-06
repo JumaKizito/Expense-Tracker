@@ -1,17 +1,39 @@
 {% extends 'registration/base.html' %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="card mt-5">
-                <div class="card-body">
-                    <h2 class="card-title">Logout</h2>
-                    <p class="card-text">You have been logged out.</p>
-                    <a href="{% url 'login' %}" class="btn btn-primary">Login again</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock content %}
+  <h2>Logout</h2>
+  <button id="logout-btn" class="btn btn-danger">Logout</button>
+
+  <script>
+    $(document).ready(function () {
+      $('#logout-btn').click(function (e) {
+        e.preventDefault();
+        Swal.fire({
+          title: 'Are you sure you want to logout?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, logout!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Perform AJAX logout request
+            $.ajax({
+              type: 'POST',
+              url: '{% url "logout" %}',
+              data: {},
+              success: function (response) {
+                // Redirect to login page
+                window.location.href = '{% url "login" %}';
+              },
+              error: function (xhr, errmsg, err) {
+                // Handle error
+                console.log(xhr.status + ": " + xhr.responseText); // Log the error
+              }
+            });
+          }
+        });
+      });
+    });
+  </script>
+{% endblock %}
