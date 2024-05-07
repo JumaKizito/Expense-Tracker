@@ -45,7 +45,7 @@
             <tbody>
                 {% for d in departments %}
                 <tr>
-                    <td><a href="{% url 'department_detail' d.id %}">{{ d.id }}</a></td>
+                    <td>{{ d.id }}</td>
                     <td>{{ d.name }}</td>
                     <td class="text-end">
                         <a href="{% url 'department_update' d.id %}" class="btn btn-sm btn-primary me-2" aria-label="Edit department"><i class="bi bi-pencil"></i> Edit</a>

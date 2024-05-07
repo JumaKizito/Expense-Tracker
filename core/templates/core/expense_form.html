@@ -7,35 +7,35 @@
             <h2 class="mb-0">Create Expense</h2>
         </div>
         <div class="card-body">
-            <form method="post" class="expense-form">
+            <form method="post" class="expense-form row">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="id_name" class="form-label">Name:</label>
-                    <input type="text" id="id_name" name="name" class="form-control" value="{{ form.instance.name }}">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.department.label_tag }}
+                        {{ form.department }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.project.label_tag }}
+                        {{ form.project }}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="id_department" class="form-label">Department:</label>
-                    <select id="id_department" name="department" class="form-control">
-                        <option value="{{ form.instance.department }}">{{ form.instance.department }}</option>
-                        <!-- Add options dynamically from your database if needed -->
-                    </select>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.amount.label_tag }}
+                        {{ form.amount }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.remarks.label_tag }}
+                        {{ form.remarks }}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="id_project" class="form-label">Project:</label>
-                    <select id="id_project" name="project" class="form-control">
-                        <option value="{{ form.instance.project }}">{{ form.instance.project }}</option>
-                        <!-- Add options dynamically from your database if needed -->
-                    </select>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
-                <div class="mb-3">
-                    <label for="id_amount" class="form-label">Amount:</label>
-                    <input type="text" id="id_amount" name="amount" class="form-control" value="{{ form.instance.amount }}">
-                </div>
-                <div class="mb-3">
-                    <label for="id_remarks" class="form-label">Remarks:</label>
-                    <textarea id="id_remarks" name="remarks" class="form-control">{{ form.instance.remarks }}</textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>

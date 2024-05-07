@@ -1,4 +1,5 @@
 import csv
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
@@ -19,9 +20,16 @@ def dashboard_view(request):
     total_budget = budget_data.aggregate(total_budget=models.Sum('amount'))['total_budget']
     total_expenses = expense_data.aggregate(total_expenses=models.Sum('amount'))['total_expenses']
 
-
     # Calculate remaining budget
     remaining_budget = total_budget - total_expenses if total_budget is not None and total_expenses is not None else None
+
+    # Prepare data for the pie chart (Budget Allocation by Category)
+    budget_by_category = budget_data.values('category__name').annotate(total_amount=models.Sum('amount'))
+    pie_chart_data = [{'category': item['category__name'], 'total_amount': float(item['total_amount'])} for item in budget_by_category]
+
+    # Prepare data for the bar chart (Department-wise Expenses)
+    expenses_by_department = expense_data.values('department__name').annotate(total_expenses=models.Sum('amount'))
+    bar_chart_data = [{'department': item['department__name'], 'total_expenses': float(item['total_expenses'])} for item in expenses_by_department]
 
     # Prepare the context dictionary
     context = {
@@ -30,6 +38,8 @@ def dashboard_view(request):
         'remaining_budget': remaining_budget,
         'departments': departments,
         'projects': projects,
+        'pie_chart_data': json.dumps(pie_chart_data),  # Convert to JSON for passing to template
+        'bar_chart_data': json.dumps(bar_chart_data),  # Convert to JSON for passing to template
         # Pass any other data you want to display on the dashboard
     }
 
@@ -64,12 +74,10 @@ def expense_detail(request, pk):
         'name': expense.name,
         'date_created': expense.date_created,
         'department': {
-            'id': expense.department.id,
-            'name': expense.department.name,
+            'name': expense.department.name  if expense.department else None,
         },
         'project': {
-            'id': expense.project.id,
-            'name': expense.project.name,
+            'name': expense.project.name  if expense.project else None,
         },
         'amount': expense.amount,
         'remarks': expense.remarks,
@@ -253,13 +261,11 @@ def budget_detail(request, pk):
         'date_created': budget.date_created,
         'name': budget.name,
         'project': {
-            'id': budget.project.id,
-            'name': budget.project.name,
+            'name': budget.project.name if budget.project else None,
         },
         'amount': budget.amount,
         'category': {
-            'id': budget.category.id,
-            'name': budget.category.name,
+            'name': budget.category.name if budget.category else None,
         }
     }
     return JsonResponse(data)
@@ -332,7 +338,7 @@ def project_create(request):
             return redirect('project_list')
     else:
         form = ProjectForm()
-    return render(request, 'core/project_create.html', {'form': form})
+    return render(request, 'core/project_form.html', {'form': form})
 
 @login_required
 def project_update(request, pk):
@@ -344,7 +350,7 @@ def project_update(request, pk):
             return redirect('project_list')
     else:
         form = ProjectForm(instance=project)
-    return render(request, 'core/project_update.html', {'form': form})
+    return render(request, 'core/project_form.html', {'form': form})
 
 @login_required
 def project_delete(request, pk):
