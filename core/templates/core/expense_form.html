@@ -7,29 +7,35 @@
             <h2 class="mb-0">Create Expense</h2>
         </div>
         <div class="card-body">
-            <form method="post" class="expense-form">
+            <form method="post" class="expense-form row">
                 {% csrf_token %}
-                <div class="mb-3">
-                    {{ form.name.label_tag }}
-                    {{ form.name }}
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.department.label_tag }}
+                        {{ form.department }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.project.label_tag }}
+                        {{ form.project }}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    {{ form.department.label_tag }}
-                    {{ form.department }}
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.amount.label_tag }}
+                        {{ form.amount }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.remarks.label_tag }}
+                        {{ form.remarks }}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    {{ form.project.label_tag }}
-                    {{ form.project }}
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
-                <div class="mb-3">
-                    {{ form.amount.label_tag }}
-                    {{ form.amount }}
-                </div>
-                <div class="mb-3">
-                    {{ form.remarks.label_tag }}
-                    {{ form.remarks }}
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>
