@@ -72,12 +72,10 @@ def expense_detail(request, pk):
         'name': expense.name,
         'date_created': expense.date_created,
         'department': {
-            'id': expense.department.id,
-            'name': expense.department.name,
+            'name': expense.department.name  if expense.department else None,
         },
         'project': {
-            'id': expense.project.id,
-            'name': expense.project.name,
+            'name': expense.project.name  if expense.project else None,
         },
         'amount': expense.amount,
         'remarks': expense.remarks,
@@ -261,13 +259,11 @@ def budget_detail(request, pk):
         'date_created': budget.date_created,
         'name': budget.name,
         'project': {
-            'id': budget.project.id,
-            'name': budget.project.name,
+            'name': budget.project.name if budget.project else None,
         },
         'amount': budget.amount,
         'category': {
-            'id': budget.category.id,
-            'name': budget.category.name,
+            'name': budget.category.name if budget.category else None,
         }
     }
     return JsonResponse(data)
