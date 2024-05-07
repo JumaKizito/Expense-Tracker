@@ -332,7 +332,7 @@ def project_create(request):
             return redirect('project_list')
     else:
         form = ProjectForm()
-    return render(request, 'core/project_create.html', {'form': form})
+    return render(request, 'core/project_form.html', {'form': form})
 
 @login_required
 def project_update(request, pk):
@@ -344,7 +344,7 @@ def project_update(request, pk):
             return redirect('project_list')
     else:
         form = ProjectForm(instance=project)
-    return render(request, 'core/project_update.html', {'form': form})
+    return render(request, 'core/project_form.html', {'form': form})
 
 @login_required
 def project_delete(request, pk):
