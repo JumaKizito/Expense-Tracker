@@ -39,8 +39,8 @@
             {% for project in projects %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td><a href="{% url 'project_detail' project.pk %}">{{ project.name }}</a></td>
-                    <td><a href="{% url 'project_detail' project.pk %}">{{ project.department }}</a></td>
+                    <td>{{ project.name }}</td>
+                    <td>{{ project.department }}</td>
                     <td class="text-end">
                         <a href="{% url 'project_update' project.pk %}" class="btn btn-sm btn-primary me-2" aria-label="Edit project"><i class="bi bi-pencil"></i> Edit</a>
                         <button onclick="deleteProject({{ project.pk }})" class="btn btn-sm btn-danger" aria-label="Delete department">
