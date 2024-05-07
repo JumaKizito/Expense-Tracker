@@ -14,6 +14,7 @@ def dashboard_view(request):
     budget_data = Budget_Management.objects.all()
     expense_data = Expense_Management.objects.all()
     departments = Department.objects.count()
+    projects = Project.objects.count()
 
     # Calculate total budget and total expenses
     total_budget = budget_data.aggregate(total_budget=models.Sum('amount'))['total_budget']
@@ -36,6 +37,7 @@ def dashboard_view(request):
         'total_expenses': total_expenses,
         'remaining_budget': remaining_budget,
         'departments': departments,
+        'projects': projects,
         'pie_chart_data': json.dumps(pie_chart_data),  # Convert to JSON for passing to template
         'bar_chart_data': json.dumps(bar_chart_data),  # Convert to JSON for passing to template
         # Pass any other data you want to display on the dashboard
