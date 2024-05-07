@@ -95,11 +95,11 @@
             success: function(data) {
                 console.log(data);
                 // Check for null or undefined for each property
-                const dateCreated = data.date_created !== null && data.date_created !== undefined ? data.date_created : 'none';
-                const name = data.name !== null && data.name !== undefined ? data.name : 'none';
-                const projectName = data.project !== null && data.project !== undefined && data.project.name !== null && data.project.name !== undefined ? data.project.name : 'none';
-                const amount = data.amount !== null && data.amount !== undefined ? data.amount : 'none';
-                const categoryName = data.category !== null && data.category !== undefined && data.category.name !== null && data.category.name !== undefined ? data.category.name : 'none';
+                let dateCreated = data.date_created;
+                let name = data.name;
+                let projectName = data.project ? data.project.name : 'None';
+                let amount = data.amount;
+                let categoryName = data.category ? data.category.name : 'None';
 
                 // Populate modal body with budget details
                 $('#budgetDetailsBody').html(`

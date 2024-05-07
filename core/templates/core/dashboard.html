@@ -1,120 +1,200 @@
-
 {% extends 'core/main.html' %}
+
 {% block content %}
-    <!-- Main content -->
-    <div class="h-screen flex-grow-1 overflow-y-lg-auto">
-        <!-- Header -->
-        <header class="bg-surface-primary border-bottom pt-6">
-            <div class="container-fluid">
-                <div class="mb-npx">
-                    <div class="row align-items-center">
-                        <div class="col-sm-6 col-12 mb-4 mb-sm-0">
-                            <!-- Title -->
-                            <h1 class="h2 mb-0 ls-tight">Budget and  Expense Tracker System</h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <!-- Main -->
-        <main class="py-6 bg-surface-secondary">
-            <div class="container-fluid">
-                <!-- Card stats -->
-                <div class="row g-6 mb-6">
-                    <div class="col-xl-3 col-sm-6 col-12">
-                        <div class="card shadow border-0">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Budget</span>
-                                        <span class="h3 font-bold mb-0">Ksh. {{ total_budget }}</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="icon icon-shape bg-tertiary text-white text-lg rounded-circle">
-                                            <i class="bi bi-credit-card"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-2 mb-0 text-sm">
-                                    <span class="badge badge-pill bg-soft-success text-success me-2">
-                                        <i class="bi bi-arrow-up me-1"></i>13%
-                                    </span>
-                                    <span class="text-nowrap text-xs text-muted">Since last month</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-sm-6 col-12">
-                        <div class="card shadow border-0">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Expenses</span>
-                                        <span class="h3 font-bold mb-0">Ksh {{total_expenses}}</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="icon icon-shape bg-primary text-white text-lg rounded-circle">
-                                            <i class="bi bi-people"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-2 mb-0 text-sm">
-                                    <span class="badge badge-pill bg-soft-success text-success me-2">
-                                        <i class="bi bi-arrow-up me-1"></i>30%
-                                    </span>
-                                    <span class="text-nowrap text-xs text-muted">Since last month</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-sm-6 col-12">
-                        <div class="card shadow border-0">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total Departments</span>
-                                        <span class="h3 font-bold mb-0">{{departments}}</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="icon icon-shape bg-info text-white text-lg rounded-circle">
-                                            <i class="bi bi-clock-history"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-2 mb-0 text-sm">
-                                    <span class="badge badge-pill bg-soft-danger text-danger me-2">
-                                        <i class="bi bi-arrow-down me-1"></i>-5%
-                                    </span>
-                                    <span class="text-nowrap text-xs text-muted">Since last month</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-sm-6 col-12">
-                        <div class="card shadow border-0">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total Projects</span>
-                                        <span class="h3 font-bold mb-0">{{projects}}</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="icon icon-shape bg-warning text-white text-lg rounded-circle">
-                                            <i class="bi bi-minecart-loaded"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-2 mb-0 text-sm">
-                                    <span class="badge badge-pill bg-soft-success text-success me-2">
-                                        <i class="bi bi-arrow-up me-1"></i>10%
-                                    </span>
-                                    <span class="text-nowrap text-xs text-muted">Since last month</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+<main>
+  <!-- Header -->
+  <header class="bg-surface-primary border-bottom pt-6 pb-3">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+          <!-- Title -->
+          <h1 class="h2 mb-0 ls-tight">Budget and Expense Tracker System</h1>
+        </div>
+      </div>
     </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container-fluid">
+    <div class="h-screen flex-grow-1 py-6 bg-surface-secondary">
+      <!-- Card stats -->
+      <div class="row g-6 mb-6">
+        <!-- Budget Card -->
+        <div class="col-xl-3 col-sm-6 col-12">
+          <div class="card shadow border-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <span class="h6 font-semibold text-muted text-sm d-block mb-2">Budget</span>
+                  <span class="h3 font-bold mb-0">Ksh. {{ total_budget }}</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-tertiary text-white text-lg rounded-circle">
+                    <i class="bi bi-wallet2"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2 mb-0 text-sm">
+                <span class="badge badge-pill bg-soft-success text-success me-2"><i class="bi bi-arrow-up me-1"></i>13%</span>
+                <span class="text-nowrap text-xs text-muted">Since last month</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Expenses Card -->
+        <div class="col-xl-3 col-sm-6 col-12">
+          <div class="card shadow border-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <span class="h6 font-semibold text-muted text-sm d-block mb-2">Expenses</span>
+                  <span class="h3 font-bold mb-0">Ksh {{total_expenses}}</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-primary text-white text-lg rounded-circle">
+                    <i class="bi bi-cash"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2 mb-0 text-sm">
+                <span class="badge badge-pill bg-soft-success text-success me-2"><i class="bi bi-arrow-up me-1"></i>30%</span>
+                <span class="text-nowrap text-xs text-muted">Since last month</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Total Departments Card -->
+        <div class="col-xl-3 col-sm-6 col-12">
+          <div class="card shadow border-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <span class="h6 font-semibold text-muted text-sm d-block mb-2">Departments</span>
+                  <span class="h3 font-bold mb-0">{{departments}}</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-info text-white text-lg rounded-circle">
+                    <i class="bi bi-people"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2 mb-0 text-sm">
+                <span class="badge badge-pill bg-soft-danger text-danger me-2"><i class="bi bi-arrow-down me-1"></i>-5%</span>
+                <span class="text-nowrap text-xs text-muted">Since last month</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Total Projects Card -->
+        <div class="col-xl-3 col-sm-6 col-12">
+          <div class="card shadow border-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <span class="h6 font-semibold text-muted text-sm d-block mb-2">Projects</span>
+                  <span class="h3 font-bold mb-0">{{projects}}</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-warning text-white text-lg rounded-circle">
+                    <i class="bi bi-briefcase"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2 mb-0 text-sm">
+                <span class="badge badge-pill bg-soft-success text-success me-2"><i class="bi bi-arrow-up me-1"></i>10%</span>
+                <span class="text-nowrap text-xs text-muted">Since last month</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart section -->
+      <div class="row">
+        <!-- Pie Chart -->
+        <div class="col-lg-6">
+          <div class="card shadow">
+            <div class="card-body">
+                <h5>Budget Allocation by Category</h5>
+              <canvas id="pieChart" class="chart" width="200" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Bar Chart -->
+        <div class="col-lg-6">
+          <div class="card shadow">
+            <div class="card-body">
+                <h5>Department-wise Expense</h5>
+              <canvas id="barChart" class="chart" width="200" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Chart.js Initialization -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Pie Chart
+      var pieData = JSON.parse('{{ pie_chart_data|safe }}');
+      var pieCtx = document.getElementById('pieChart').getContext('2d');
+      var pieChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+          labels: pieData.map(item => item.category),
+          datasets: [{
+            label: 'Budget Allocation by Category',
+            data: pieData.map(item => item.total_amount),
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              // Add more colors if needed
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              // Add more colors if needed
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          title: {
+            display: true,
+            text: 'Budget Allocation by Category'
+          }
+          // Add other chart options if needed
+        }
+      });
+
+      // Bar Chart
+      var barData = JSON.parse('{{ bar_chart_data|safe }}');
+      var barCtx = document.getElementById('barChart').getContext('2d');
+      var barChart = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+          labels: barData.map(item => item.department),
+          datasets: [{
+            label: 'Department-wise Expenses',
+            data: barData.map(item => item.total_expenses),
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          title: {
+            display: true,
+            text: 'Department-wise Expenses'
+          }
+          // Add other chart options if needed
+        }
+      });
+    });
+  </script>
 {% endblock content %}
