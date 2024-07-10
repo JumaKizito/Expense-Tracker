@@ -57,6 +57,9 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if not projects %}
+    <p class="m-3 text-center text-danger">No projects found</p>
+    {% endif %}
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-auto">
