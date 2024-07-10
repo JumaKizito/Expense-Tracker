@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Department(models.Model):
     name = models.CharField(max_length=100)
 
@@ -8,6 +9,7 @@ class Department(models.Model):
 
     class Meta:
         verbose_name_plural = "Departments"
+
 
 class Project(models.Model):
     name = models.CharField(max_length=100)
@@ -19,6 +21,7 @@ class Project(models.Model):
     class Meta:
         verbose_name_plural = "Projects"
 
+
 class Category(models.Model):
     date_created = models.DateTimeField(auto_now=True, blank=True, null=True)
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -29,15 +32,22 @@ class Category(models.Model):
         verbose_name_plural = 'category list'
 
     def __str__(self):
-        return f"{self.name} - {'Active' if self.is_active else 'Inactive'}"
+        return str({self.name})
+
 
 class Budget_Management(models.Model):
     name = models.CharField(max_length=200, blank=True, null=True)
     date_created = models.DateTimeField(auto_now=True, blank=True, null=True)
-    department = models.ForeignKey(Department, on_delete=models.SET_NULL, blank=True, null=True)
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL, blank=True, null=True)
+    department = models.ForeignKey(
+        Department, on_delete=models.SET_NULL, blank=True, null=True
+    )
+    project = models.ForeignKey(
+        Project, on_delete=models.SET_NULL, blank=True, null=True
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True
+    )
     remarks = models.TextField(null=True, blank=True)
 
     class Meta:
@@ -50,8 +60,12 @@ class Budget_Management(models.Model):
 class Expense_Management(models.Model):
     name = models.CharField(max_length=200, blank=True, null=True)
     date_created = models.DateTimeField(auto_now=True, blank=True, null=True)
-    department = models.ForeignKey(Department, on_delete=models.SET_NULL, blank=True, null=True)
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL, blank=True, null=True)
+    department = models.ForeignKey(
+        Department, on_delete=models.SET_NULL, blank=True, null=True
+    )
+    project = models.ForeignKey(
+        Project, on_delete=models.SET_NULL, blank=True, null=True
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     remarks = models.TextField(null=True, blank=True)
 
@@ -59,4 +73,4 @@ class Expense_Management(models.Model):
         verbose_name_plural = 'Expense_Management'
 
     def __str__(self):
-        return f"{self.department} - {self.project} - {self.amount}"
+        return str(self.name)

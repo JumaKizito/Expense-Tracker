@@ -7,9 +7,15 @@
         <div class="container-fluid">
             <div class="mb-npx">
                 <div class="row align-items-center">
-                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
-                        <!-- Title -->
-                        <h1 class="h2 mb-0 ls-tight">project List</h1>
+                    <!-- Title -->
+                    <h1 class="h2 mb-0 ls-tight">project List</h1>
+                    <div class="col-sm-6 col-12 mb-4 mt-4 mb-sm-0">
+                        <form method="GET" action="" class="d-inline-block me-auto">
+                            <div class="input-group">
+                                <input type="text" name="q" placeholder="Search..." value="{{ query|default:'' }}" class="form-control" />
+                                <button type="submit" class="btn btn-outline-secondary">Search</button>
+                            </div>
+                        </form>
                     </div>
                     <!-- Actions -->
                     <div class="col-sm-6 col-12 text-sm-end">
@@ -51,6 +57,32 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if not projects %}
+    <p class="m-3 text-center text-danger">No projects found</p>
+    {% endif %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if projects.has_previous %}
+                            <a href="?page=1{% if query %}&q={{ query }}{% endif %}">&laquo; first</a>
+                            <a href="?page={{ projects.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">previous</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ projects.number }} of {{ projects.paginator.num_pages }}.
+                        </span>
+
+                        {% if projects.has_next %}
+                            <a href="?page={{ projects.next_page_number }}{% if query %}&q={{ query }}{% endif %}">next</a>
+                            <a href="?page={{ projects.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     function deleteProject(pk) {

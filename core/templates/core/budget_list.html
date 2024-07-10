@@ -8,21 +8,27 @@
         <div class="container-fluid">
             <div class="mb-npx">
                 <div class="row align-items-center">
-                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
-                        <!-- Title -->
-                        <h1 class="h2 mb-0 ls-tight">Budget List</h1>
+                    <!-- Title -->
+                    <h1 class="h2 mb-0 ls-tight">Budget List</h1>
+                    <div class="col-sm-6 col-12 mb-4 mt-4 mb-sm-0">
+                        <form method="GET" action="" class="d-inline-block me-auto">
+                            <div class="input-group">
+                                <input type="text" name="q" placeholder="Search..." value="{{ query|default:'' }}" class="form-control" />
+                                <button type="submit" class="btn btn-outline-secondary">Search</button>
+                            </div>
+                        </form>
                     </div>
                     <!-- Actions -->
                     <div class="col-sm-6 col-12 text-sm-end">
-                        <div class="mx-n1 d-flex align-items-center justify-content-end">
+                        <div class="d-flex align-items-center justify-content-end">
                             <a href="{% url 'budget_create' %}" class="btn d-inline-flex btn-sm btn-primary mx-1">
                                 <span class="pe-2">
                                     <i class="bi bi-plus"></i>
                                 </span>
                                 <span>Create</span>
                             </a>
-                            <form action="{% url 'budget_list' %}" method="get" class="d-inline-block">
-                                <button class="btn d-inline-flex btn-sm btn-success mx-1" type="submit" name="export" value="1">
+                            <form action="{% url 'budget_list' %}" method="get" class="d-inline-block mx-1">
+                                <button class="btn d-inline-flex btn-sm btn-success" type="submit" name="export" value="1">
                                     <span class="pe-2">
                                         <i class="bi bi-download"></i>
                                     </span>
@@ -65,6 +71,32 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if not budgets %}
+    <p class="m-3 text-center text-danger">No budgets found</p>
+    {% endif %}
+    <div class="mt-5">
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if budgets.has_previous %}
+                            <a href="?page=1{% if query %}&q={{ query }}{% endif %}">&laquo; first</a>
+                            <a href="?page={{ budgets.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">previous</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ budgets.number }} of {{ budgets.paginator.num_pages }}.
+                        </span>
+
+                        {% if budgets.has_next %}
+                            <a href="?page={{ budgets.next_page_number }}{% if query %}&q={{ query }}{% endif %}">next</a>
+                            <a href="?page={{ budgets.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Bootstrap Modal -->
