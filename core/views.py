@@ -1,6 +1,7 @@
 import csv
 import json
 from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.db import models
@@ -105,8 +106,32 @@ def expense_list(request):
             )
 
         return response
-    expenses = Expense_Management.objects.all()
-    context = {'expenses': expenses}
+
+    query = request.GET.get('q')
+    if query:
+        expenses = Expense_Management.objects.filter(
+            models.Q(name__icontains=query) |
+            models.Q(department__name__icontains=query) |
+            models.Q(project__name__icontains=query) |
+            models.Q(remarks__icontains=query)
+        )
+    else:
+        expenses = Expense_Management.objects.all()
+
+    paginator = Paginator(expenses, 15)  # Show 15 expenses per page
+    page = request.GET.get('page')
+
+    try:
+        expenses = paginator.page(page)
+    except PageNotAnInteger:
+        expenses = paginator.page(1)
+    except EmptyPage:
+        expenses = paginator.page(paginator.num_pages)
+
+    context = {
+        'expenses': expenses,
+        'query': query,
+    }
     return render(request, 'core/expense_list.html', context)
 
 
@@ -202,8 +227,26 @@ def department_list(request):
 
         return response
 
-    departments = Department.objects.all()
-    context = {'departments': departments}
+    query = request.GET.get('q')
+    if query:
+        departments = Department.objects.filter(name__icontains=query)
+    else:
+        departments = Department.objects.all()
+
+    paginator = Paginator(departments, 15)  # Show 15 departments per page
+    page = request.GET.get('page')
+
+    try:
+        departments = paginator.page(page)
+    except PageNotAnInteger:
+        departments = paginator.page(1)
+    except EmptyPage:
+        departments = paginator.page(paginator.num_pages)
+
+    context = {
+        'departments': departments,
+        'query': query,
+    }
     return render(request, 'core/department_list.html', context)
 
 
@@ -220,7 +263,7 @@ def department_create(request):
         form = DepartmentForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('department-list')
+            return redirect('department_list')
     else:
         form = DepartmentForm()
     return render(request, 'core/department_form.html', {'form': form})
@@ -249,12 +292,27 @@ def department_delete(request, pk):
 
 
 def category_list(request):
-    categories = Category.objects.all()
-    return render(
-        request,
-        'core/category_list.html',
-        {'categories': categories}
-    )
+    query = request.GET.get('q')
+    if query:
+        categories = Category.objects.filter(name__icontains=query)
+    else:
+        categories = Category.objects.all()
+
+    paginator = Paginator(categories, 15)
+    page = request.GET.get('page')
+
+    try:
+        categories = paginator.page(page)
+    except PageNotAnInteger:
+        categories = paginator.page(1)
+    except EmptyPage:
+        categories = paginator.page(paginator.num_pages)
+
+    context = {
+        'categories': categories,
+        'query': query,
+    }
+    return render(request, 'core/category_list.html', context)
 
 
 @login_required
@@ -330,8 +388,26 @@ def budget_list(request):
 
         return response
 
-    budgets = Budget_Management.objects.all()
-    context = {'budgets': budgets}
+    query = request.GET.get('q')
+    if query:
+        budgets = Budget_Management.objects.filter(name__icontains=query)
+    else:
+        budgets = Budget_Management.objects.all()
+
+    paginator = Paginator(budgets, 15)  # Show 15 budgets per page
+    page = request.GET.get('page')
+
+    try:
+        budgets = paginator.page(page)
+    except PageNotAnInteger:
+        budgets = paginator.page(1)
+    except EmptyPage:
+        budgets = paginator.page(paginator.num_pages)
+
+    context = {
+        'budgets': budgets,
+        'query': query,
+    }
     return render(request, 'core/budget_list.html', context)
 
 
@@ -402,8 +478,26 @@ def project_list(request):
 
         return response
 
-    projects = Project.objects.all()
-    context = {'projects': projects}
+    query = request.GET.get('q')
+    if query:
+        projects = Project.objects.filter(name__icontains=query)
+    else:
+        projects = Project.objects.all()
+
+    paginator = Paginator(projects, 15)  # Show 15 projects per page
+    page = request.GET.get('page')
+
+    try:
+        projects = paginator.page(page)
+    except PageNotAnInteger:
+        projects = paginator.page(1)
+    except EmptyPage:
+        projects = paginator.page(paginator.num_pages)
+
+    context = {
+        'projects': projects,
+        'query': query,
+    }
     return render(request, 'core/project_list.html', context)
 
 
