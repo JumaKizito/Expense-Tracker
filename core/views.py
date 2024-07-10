@@ -4,8 +4,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.db import models
-from .models import Department, Project, Category, Budget_Management, Expense_Management
-from .forms import DepartmentForm, ProjectForm, CategoryForm, BudgetManagementForm, ExpenseManagementForm
+from .models import (
+    Department, Project, Category,
+    Budget_Management, Expense_Management
+)
+from .forms import (
+    DepartmentForm, ProjectForm,
+    CategoryForm, BudgetManagementForm,
+    ExpenseManagementForm
+)
+
 
 # Create your views here.
 @login_required
@@ -17,19 +25,37 @@ def dashboard_view(request):
     projects = Project.objects.count()
 
     # Calculate total budget and total expenses
-    total_budget = budget_data.aggregate(total_budget=models.Sum('amount'))['total_budget']
-    total_expenses = expense_data.aggregate(total_expenses=models.Sum('amount'))['total_expenses']
+    total_budget = budget_data.aggregate(
+        total_budget=models.Sum('amount')
+        )['total_budget']
+    total_expenses = expense_data.aggregate(
+        total_expenses=models.Sum('amount')
+        )['total_expenses']
 
     # Calculate remaining budget
-    remaining_budget = total_budget - total_expenses if total_budget is not None and total_expenses is not None else None
+    if total_budget is not None and total_expenses is not None:
+        remaining_budget = total_budget - total_expenses
+    else:
+        remaining_budget = None
 
     # Prepare data for the pie chart (Budget Allocation by Category)
-    budget_by_category = budget_data.values('category__name').annotate(total_amount=models.Sum('amount'))
-    pie_chart_data = [{'category': item['category__name'], 'total_amount': float(item['total_amount'])} for item in budget_by_category]
+    budget_by_category = budget_data.values(
+        'category__name'
+        ).annotate(total_amount=models.Sum('amount'))
+    pie_chart_data = [
+        {
+            'category': item['category__name'],
+            'total_amount': float(item['total_amount'])
+        } for item in budget_by_category]
 
     # Prepare data for the bar chart (Department-wise Expenses)
-    expenses_by_department = expense_data.values('department__name').annotate(total_expenses=models.Sum('amount'))
-    bar_chart_data = [{'department': item['department__name'], 'total_expenses': float(item['total_expenses'])} for item in expenses_by_department]
+    expenses_by_department = expense_data.values(
+        'department__name').annotate(total_expenses=models.Sum('amount'))
+    bar_chart_data = [
+        {
+            'department': item['department__name'],
+            'total_expenses': float(item['total_expenses'])
+        } for item in expenses_by_department]
 
     # Prepare the context dictionary
     context = {
@@ -38,13 +64,16 @@ def dashboard_view(request):
         'remaining_budget': remaining_budget,
         'departments': departments,
         'projects': projects,
-        'pie_chart_data': json.dumps(pie_chart_data),  # Convert to JSON for passing to template
-        'bar_chart_data': json.dumps(bar_chart_data),  # Convert to JSON for passing to template
+        # Convert to JSON for passing to template
+        'pie_chart_data': json.dumps(pie_chart_data),
+        # Convert to JSON for passing to template
+        'bar_chart_data': json.dumps(bar_chart_data),
         # Pass any other data you want to display on the dashboard
     }
 
     # Render the dashboard template with the data
     return render(request, 'core/dashboard.html', context)
+
 
 @login_required
 def expense_list(request):
@@ -56,16 +85,30 @@ def expense_list(request):
         expenses = Expense_Management.objects.all()
 
         writer = csv.writer(response)
-        writer.writerow(['Name', 'Date Created', 'Department', 'Project', 'Amount', 'Remarks'])
+        writer.writerow(
+            [
+                'Name', 'Date Created',
+                'Department', 'Project',
+                'Amount', 'Remarks'
+            ]
+        )
 
         for expense in expenses:
-            writer.writerow([expense.name, expense.date_created, expense.department.name if expense.department else '',
-                             expense.project.name if expense.project else '', expense.amount, expense.remarks])
+            writer.writerow(
+                [
+                    expense.name,
+                    expense.date_created,
+                    expense.department.name if expense.department else '',
+                    expense.project.name if expense.project else '',
+                    expense.amount, expense.remarks
+                ]
+            )
 
         return response
     expenses = Expense_Management.objects.all()
     context = {'expenses': expenses}
     return render(request, 'core/expense_list.html', context)
+
 
 @login_required
 def expense_detail(request, pk):
@@ -74,15 +117,16 @@ def expense_detail(request, pk):
         'name': expense.name,
         'date_created': expense.date_created,
         'department': {
-            'name': expense.department.name  if expense.department else None,
+            'name': expense.department.name if expense.department else None,
         },
         'project': {
-            'name': expense.project.name  if expense.project else None,
+            'name': expense.project.name if expense.project else None,
         },
         'amount': expense.amount,
         'remarks': expense.remarks,
     }
     return JsonResponse(data)
+
 
 @login_required
 def expense_create(request):
@@ -105,11 +149,13 @@ def expense_create(request):
 
 @login_required
 def expense_update(request, pk):
-    # Retrieve the expense object with the given primary key or return a 404 error
+    # Retrieve the expense object with the given
+    # primary key or return a 404 error
     expense = get_object_or_404(Expense_Management, pk=pk)
     # Check if the request method is POST
     if request.method == 'POST':
-        # Create a form instance with the POST data and the retrieved expense object
+        # Create a form instance with the POST data
+        # and the retrieved expense object
         form = ExpenseManagementForm(request.POST, instance=expense)
         # Check if the form is valid
         if form.is_valid():
@@ -118,14 +164,17 @@ def expense_update(request, pk):
             # Redirect to the expense list page
             return redirect('expense_list')
     else:
-        # If the request method is not POST, create a form instance with the retrieved expense object
+        # If the request method is not POST, create a form instance
+        # with the retrieved expense object
         form = ExpenseManagementForm(instance=expense)
     # Render the expense update form template with the form instance
     return render(request, 'core/expense_form.html', {'form': form})
 
+
 @login_required
 def expense_delete(request, pk):
-    # Retrieve the expense object with the given primary key or return a 404 error
+    # Retrieve the expense object with the given primary key
+    # or return a 404 error
     expense = get_object_or_404(Expense_Management, pk=pk)
     # Check if the request method is POST
     if request.method == 'POST':
@@ -133,13 +182,15 @@ def expense_delete(request, pk):
         return JsonResponse({'success': True})
     return JsonResponse({'success': True})
 
+
 # Department Views
 @login_required
 def department_list(request):
     """List departments"""
     if 'export' in request.GET:
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="departments.csv"'
+        response[
+            'Content-Disposition'] = 'attachment; filename="departments.csv"'
 
         departments = Department.objects.all()
 
@@ -155,11 +206,13 @@ def department_list(request):
     context = {'departments': departments}
     return render(request, 'core/department_list.html', context)
 
+
 @login_required
 def department_detail(request, pk):
     department = get_object_or_404(Department, pk=pk)
     context = {'department': department}
     return render(request, 'core/department_detail.html', context)
+
 
 @login_required
 def department_create(request):
@@ -171,6 +224,7 @@ def department_create(request):
     else:
         form = DepartmentForm()
     return render(request, 'core/department_form.html', {'form': form})
+
 
 @login_required
 def department_update(request, pk):
@@ -184,6 +238,7 @@ def department_update(request, pk):
         form = DepartmentForm(instance=department)
     return render(request, 'core/department_form.html', {'form': form})
 
+
 @login_required
 def department_delete(request, pk):
     department = get_object_or_404(Department, pk=pk)
@@ -192,14 +247,21 @@ def department_delete(request, pk):
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
+
 def category_list(request):
     categories = Category.objects.all()
-    return render(request, 'core/category_list.html', {'categories': categories})
+    return render(
+        request,
+        'core/category_list.html',
+        {'categories': categories}
+    )
+
 
 @login_required
 def category_detail(request, pk):
     category = get_object_or_404(Category, pk=pk)
     return render(request, 'core/category_detail.html', {'category': category})
+
 
 @login_required
 def category_create(request):
@@ -211,6 +273,7 @@ def category_create(request):
     else:
         form = CategoryForm()
     return render(request, 'core/category_form.html', {'form': form})
+
 
 @login_required
 def category_update(request, pk):
@@ -224,6 +287,7 @@ def category_update(request, pk):
         form = CategoryForm(instance=category)
     return render(request, 'core/category_form.html', {'form': form})
 
+
 @login_required
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
@@ -231,6 +295,7 @@ def category_delete(request, pk):
         category.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
 
 @login_required
 def budget_list(request):
@@ -242,17 +307,33 @@ def budget_list(request):
         budgets = Budget_Management.objects.all()
 
         writer = csv.writer(response)
-        writer.writerow(['Name', 'Date Created', 'Department', 'Project', 'Amount', 'Category', 'Remarks'])
+        writer.writerow(
+            [
+                'Name', 'Date Created',
+                'Department', 'Project',
+                'Amount', 'Category', 'Remarks'
+            ]
+        )
 
         for budget in budgets:
-            writer.writerow([budget.name, budget.date_created, budget.department.name if budget.department else '',
-                             budget.project.name if budget.project else '', budget.amount, budget.category.name if budget.category else '', budget.remarks])
+            writer.writerow(
+                [
+                    budget.name,
+                    budget.date_created,
+                    budget.department.name if budget.department else '',
+                    budget.project.name if budget.project else '',
+                    budget.amount,
+                    budget.category.name if budget.category else '',
+                    budget.remarks
+                ]
+            )
 
         return response
 
     budgets = Budget_Management.objects.all()
     context = {'budgets': budgets}
     return render(request, 'core/budget_list.html', context)
+
 
 @login_required
 def budget_detail(request, pk):
@@ -270,6 +351,7 @@ def budget_detail(request, pk):
     }
     return JsonResponse(data)
 
+
 @login_required
 def budget_create(request):
     if request.method == 'POST':
@@ -280,6 +362,7 @@ def budget_create(request):
     else:
         form = BudgetManagementForm()
     return render(request, 'core/budget_create.html', {'form': form})
+
 
 @login_required
 def budget_update(request, pk):
@@ -293,6 +376,7 @@ def budget_update(request, pk):
         form = BudgetManagementForm(instance=budget)
     return render(request, 'core/budget_update.html', {'form': form})
 
+
 @login_required
 def budget_delete(request, pk):
     budget = get_object_or_404(Budget_Management, pk=pk)
@@ -300,6 +384,7 @@ def budget_delete(request, pk):
         budget.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
 
 def project_list(request):
     """List projects"""
@@ -321,6 +406,7 @@ def project_list(request):
     context = {'projects': projects}
     return render(request, 'core/project_list.html', context)
 
+
 @login_required
 def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk)
@@ -328,6 +414,7 @@ def project_detail(request, pk):
         'name': project.name,
     }
     return JsonResponse(data)
+
 
 @login_required
 def project_create(request):
@@ -340,6 +427,7 @@ def project_create(request):
         form = ProjectForm()
     return render(request, 'core/project_form.html', {'form': form})
 
+
 @login_required
 def project_update(request, pk):
     project = get_object_or_404(Project, pk=pk)
@@ -351,6 +439,7 @@ def project_update(request, pk):
     else:
         form = ProjectForm(instance=project)
     return render(request, 'core/project_form.html', {'form': form})
+
 
 @login_required
 def project_delete(request, pk):
