@@ -5,13 +5,13 @@
 /* VARIABLE DEFINITIONS */
 html[data-theme="light"],
 :root {
-    --primary: #79aec8;
+    --primary: #001f3f;
     --secondary: #417690;
     --accent: #f5dd5d;
-    --primary-fg: #fff;
+    --primary-fg: #001f3f;
 
     --body-fg: #333;
-    --body-bg: #fff;
+    --body-bg: #001f3f;
     --body-quiet-color: #666;
     --body-loud-color: #000;
 
