@@ -5,6 +5,9 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.db import models
+from .decorators import admin_required
+
+
 from .models import (
     Department, Project, Category,
     Budget_Management, Expense_Management
@@ -154,6 +157,7 @@ def expense_detail(request, pk):
 
 
 @login_required
+@admin_required
 def expense_create(request):
     # Check if the request method is POST
     if request.method == 'POST':
@@ -173,6 +177,7 @@ def expense_create(request):
 
 
 @login_required
+@admin_required
 def expense_update(request, pk):
     # Retrieve the expense object with the given
     # primary key or return a 404 error
@@ -197,6 +202,7 @@ def expense_update(request, pk):
 
 
 @login_required
+@admin_required
 def expense_delete(request, pk):
     # Retrieve the expense object with the given primary key
     # or return a 404 error
@@ -258,6 +264,7 @@ def department_detail(request, pk):
 
 
 @login_required
+@admin_required
 def department_create(request):
     if request.method == 'POST':
         form = DepartmentForm(request.POST)
@@ -270,6 +277,7 @@ def department_create(request):
 
 
 @login_required
+@admin_required
 def department_update(request, pk):
     department = get_object_or_404(Department, pk=pk)
     if request.method == 'POST':
@@ -283,6 +291,7 @@ def department_update(request, pk):
 
 
 @login_required
+@admin_required
 def department_delete(request, pk):
     department = get_object_or_404(Department, pk=pk)
     if request.method == 'POST':
@@ -322,6 +331,7 @@ def category_detail(request, pk):
 
 
 @login_required
+@admin_required
 def category_create(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
@@ -334,6 +344,7 @@ def category_create(request):
 
 
 @login_required
+@admin_required
 def category_update(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -347,6 +358,7 @@ def category_update(request, pk):
 
 
 @login_required
+@admin_required
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -429,6 +441,7 @@ def budget_detail(request, pk):
 
 
 @login_required
+@admin_required
 def budget_create(request):
     if request.method == 'POST':
         form = BudgetManagementForm(request.POST)
@@ -441,6 +454,7 @@ def budget_create(request):
 
 
 @login_required
+@admin_required
 def budget_update(request, pk):
     budget = get_object_or_404(Budget_Management, pk=pk)
     if request.method == 'POST':
@@ -454,6 +468,7 @@ def budget_update(request, pk):
 
 
 @login_required
+@admin_required
 def budget_delete(request, pk):
     budget = get_object_or_404(Budget_Management, pk=pk)
     if request.method == 'POST':
@@ -511,6 +526,7 @@ def project_detail(request, pk):
 
 
 @login_required
+@admin_required
 def project_create(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
@@ -523,6 +539,7 @@ def project_create(request):
 
 
 @login_required
+@admin_required
 def project_update(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if request.method == 'POST':
@@ -536,6 +553,7 @@ def project_update(request, pk):
 
 
 @login_required
+@admin_required
 def project_delete(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if request.method == 'POST':
