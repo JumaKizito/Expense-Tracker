@@ -12,3 +12,18 @@
     height: 350px;
     margin: 0 auto;
   }
+
+.nav-item.active > .nav-link {
+  background-color: #F9A602;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.nav-item.active > .nav-link > .bi{
+  color: #ffffff!important;
+}
+
+/* Add padding to the content area */
+.content-wrapper {
+  padding-left: 250px; /* Adjust this value based on your sidebar width */
+}
