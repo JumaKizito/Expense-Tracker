@@ -2,90 +2,103 @@
 
 {% block content %}
 <style>
-    .main-content{
+    .main-content {
         width: 50%;
         border-radius: 20px;
-        box-shadow: 0 5px 5px rgba(0,0,0,.4);
+        box-shadow: 0 5px 5px rgba(0, 0, 0, .4);
         margin: 5em auto;
         display: flex;
     }
-    .company__info{
+    .company__info {
         background-color: #1a008c;
         border-top-left-radius: 20px;
         border-bottom-left-radius: 20px;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        align-items: center; /* Center the icon horizontally */
         color: #fff;
+        padding: 2em; /* Add some padding for spacing */
     }
-    .fa-android{
-        font-size:3em;
+    .company__logo {
+        margin-left: 20px; /* Adjust this value to move the icon to the right */
+    }
+    .company__logo svg {
+        width: 150px;
+        height: 150px;
+        fill: currentColor;
+        margin-left: 10px; /* Adjust this value to move the icon to the right */
     }
     @media screen and (max-width: 640px) {
-        .main-content{width: 90%;}
-        .company__info{
-            display: none;
-        }
-        .login_form{
-            border-top-left-radius:20px;
-            border-bottom-left-radius:20px;
+        .main-content { width: 90%; }
+        .company__info { display: none; }
+        .login_form {
+            border-top-left-radius: 20px;
+            border-bottom-left-radius: 20px;
         }
     }
-    @media screen and (min-width: 642px) and (max-width:800px){
-        .main-content{width: 70%;}
+    @media screen and (min-width: 642px) and (max-width: 800px) {
+        .main-content { width: 70%; }
     }
-    .row > h2{
-        color:#1a008c;
+    .row > h2 {
+        color: #1a008c;
     }
-    .login_form{
+    .login_form {
         background-color: #fff;
-        border-top-right-radius:20px;
-        border-bottom-right-radius:20px;
-        border-top:1px solid #ccc;
-        border-right:1px solid #ccc;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        border-top: 1px solid #ccc;
+        border-right: 1px solid #ccc;
     }
-    form{
+    form {
         padding: 0 2em;
     }
-    .form__input{
+    .form__input {
         width: 100%;
-        border:0px solid transparent;
+        border: 0px solid transparent;
         border-radius: 0;
         border-bottom: 1px solid #aaa;
         padding: 1em .5em .5em;
         padding-left: 2em;
-        outline:none;
-        margin:1.5em auto;
+        outline: none;
+        margin: 1.5em auto;
         transition: all .5s ease;
     }
-    .form__input:focus{
+    .form__input:focus {
         border-bottom-color: #1a008c;
-        box-shadow: 0 0 5px rgba(0,80,80,.4);
+        box-shadow: 0 0 5px rgba(0, 80, 80, .4);
         border-radius: 4px;
     }
-    .btn{
+    .btn {
         transition: all .5s ease;
         width: 70%;
         border-radius: 30px;
-        color:#008080;
+        color: #008080;
         font-weight: 600;
         background-color: #fff;
         border: 1px solid #1a008c;
         margin-top: 1.5em;
         margin-bottom: 1em;
     }
-    .btn:hover, .btn:focus{
+    .btn:hover, .btn:focus {
         background-color: #1a008c;
-        color:#fff;
+        color: #fff;
     }
 </style>
 <!-- Main Content -->
 <div class="container-fluid">
     <div class="row main-content bg-success text-center">
         <!-- Error Messages Section -->
-        <div class="col-md-12" id="error-section">
+        <div class="col-md-12" id="error-section"></div>
+        <div class="col-md-4 company__info">
+            <span class="company__logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                  </svg>
+            </span>
         </div>
-        <div class="col-md-8 col-xs-12 col-sm-12 login_form ">
+        <div class="col-md-8 col-xs-12 col-sm-12 login_form">
             <div class="container-fluid">
                 <div class="row mt-4">
                     <h2>Register</h2>
