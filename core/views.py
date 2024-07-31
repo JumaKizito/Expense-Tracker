@@ -155,26 +155,17 @@ def expense_detail(request, pk):
     }
     return JsonResponse(data)
 
-
 @login_required
-@admin_required
 def expense_create(request):
-    # Check if the request method is POST
     if request.method == 'POST':
-        # Create a form instance with the POST data
-        form = ExpenseManagementForm(request.POST)
-        # Check if the form is valid
+        form = ExpenseForm(request.POST)
         if form.is_valid():
-            # Save the form data to the database
-            form.save()
-            # Redirect to the expense list page
-            return redirect('expense_list')
+            expense = form.save(commit=False)
+            expense.save()
+            return redirect('dashboard')  # Redirect to the dashboard after saving
     else:
-        # If the request method is not POST, create an empty form instance
-        form = ExpenseManagementForm()
-    # Render the expense creation form template with the form instance
+        form = ExpenseForm()
     return render(request, 'core/expense_form.html', {'form': form})
-
 
 @login_required
 @admin_required
