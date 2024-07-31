@@ -156,7 +156,6 @@ def expense_detail(request, pk):
     return JsonResponse(data)
 
 @login_required
-@admin_required
 def expense_create(request):
     if request.method == 'POST':
         form = ExpenseForm(request.POST)
