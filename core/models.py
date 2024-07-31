@@ -66,6 +66,9 @@ class Expense_Management(models.Model):
     project = models.ForeignKey(
         Project, on_delete=models.SET_NULL, blank=True, null=True
     )
+    budget = models.ForeignKey(
+        Budget_Management, on_delete=models.CASCADE, null=True, blank=True
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     remarks = models.TextField(null=True, blank=True)
 
