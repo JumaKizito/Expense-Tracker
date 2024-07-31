@@ -155,26 +155,33 @@ def expense_detail(request, pk):
     }
     return JsonResponse(data)
 
-
 @login_required
 @admin_required
 def expense_create(request):
-    # Check if the request method is POST
     if request.method == 'POST':
-        # Create a form instance with the POST data
-        form = ExpenseManagementForm(request.POST)
-        # Check if the form is valid
+        form = ExpenseForm(request.POST)
         if form.is_valid():
-            # Save the form data to the database
-            form.save()
-            # Redirect to the expense list page
-            return redirect('expense_list')
-    else:
-        # If the request method is not POST, create an empty form instance
-        form = ExpenseManagementForm()
-    # Render the expense creation form template with the form instance
-    return render(request, 'core/expense_form.html', {'form': form})
+            expense = form.save(commit=False)
+            budget = get_object_or_404(
+                Budget_Management, project=expense.project, department=expense.department
+            )
 
+            if budget.amount >= expense.amount:
+                budget.amount -= expense.amount
+                budget.save()
+                expense.save()
+                messages.success(
+                    request, 'Expense created and budget updated successfully.'
+                )
+                return redirect('dashboard')
+            else:
+                messages.error(
+                    request, 'Not enough budget available for this expense.'
+                )
+    else:
+        form = ExpenseForm()
+    
+    return render(request, 'core/expense_form.html', {'form': form})
 
 @login_required
 @admin_required
