@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.db.models import F
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
@@ -67,6 +67,9 @@ class Expense_Management(models.Model):
         Project, on_delete=models.SET_NULL, blank=True, null=True
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    budget = models.ForeignKey(
+        Budget_Management, on_delete=models.CASCADE, null=True, blank=True
+    )
     remarks = models.TextField(null=True, blank=True)
 
     class Meta:
@@ -74,3 +77,9 @@ class Expense_Management(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:  # Check if this is a new expense
+            self.budget.amount = F('amount') - self.amount
+            self.budget.save()
+        super().save(*args, **kwargs)
