@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.db.models import F
 
 class Department(models.Model):
@@ -38,6 +39,7 @@ class Category(models.Model):
 class Budget_Management(models.Model):
     name = models.CharField(max_length=200, blank=True, null=True)
     date_created = models.DateTimeField(auto_now=True, blank=True, null=True)
+    date_updated = models.DateTimeField(auto_now=True, blank=True, null=True)  # New field
     department = models.ForeignKey(
         Department, on_delete=models.SET_NULL, blank=True, null=True
     )
@@ -54,7 +56,12 @@ class Budget_Management(models.Model):
         verbose_name_plural = 'budget management'
 
     def __str__(self):
-        return str(self.id)
+        return str(self.name)
+
+    def save(self, *args, **kwargs):
+        if self.pk:  # Check if the instance is being updated
+            self.date_updated = timezone.now()  # Update the date_updated field
+        super().save(*args, **kwargs)
 
 
 class Expense_Management(models.Model):

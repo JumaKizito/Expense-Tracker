@@ -158,13 +158,13 @@ def expense_detail(request, pk):
 @login_required
 def expense_create(request):
     if request.method == 'POST':
-        form = ExpenseForm(request.POST)
+        form = ExpenseManagementForm(request.POST)
         if form.is_valid():
             expense = form.save(commit=False)
             expense.save()
             return redirect('dashboard')  # Redirect to the dashboard after saving
     else:
-        form = ExpenseForm()
+        form = ExpenseManagementForm()
     return render(request, 'core/expense_form.html', {'form': form})
 
 @login_required
@@ -365,7 +365,7 @@ def budget_list(request):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="budgets.csv"'
 
-        budgets = Budget_Management.objects.all()
+        budgets = Budget_Management.objects.all().order_by('date_updated')
 
         writer = csv.writer(response)
         writer.writerow(

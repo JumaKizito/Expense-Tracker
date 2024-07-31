@@ -97,4 +97,8 @@ class ExpenseManagementForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Enter remarks'
             }),
+            'budget': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Select Budget'
+            }),
         }
