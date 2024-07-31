@@ -162,25 +162,10 @@ def expense_create(request):
         form = ExpenseForm(request.POST)
         if form.is_valid():
             expense = form.save(commit=False)
-            budget = get_object_or_404(
-                Budget_Management, project=expense.project, department=expense.department
-            )
-
-            if budget.amount >= expense.amount:
-                budget.amount -= expense.amount
-                budget.save()
-                expense.save()
-                messages.success(
-                    request, 'Expense created and budget updated successfully.'
-                )
-                return redirect('dashboard')
-            else:
-                messages.error(
-                    request, 'Not enough budget available for this expense.'
-                )
+            expense.save()
+            return redirect('dashboard')  # Redirect to the dashboard after saving
     else:
         form = ExpenseForm()
-    
     return render(request, 'core/expense_form.html', {'form': form})
 
 @login_required
